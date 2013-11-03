@@ -1,0 +1,30 @@
+This reads scripts in the K&K Hypno Hud format, more or less.
+
+The script will be read from a <script type="text/x-hypno"> tag, or from 1.txt if there is no script tag.
+
+Tested in Safari, Firefox, Chrome, Mobile Safari(!), IE9(!!). Mobile Safari has no sound due to limitations put in place by Apple.
+
+Commands are prefixed with a hyphen.
+
+Commands are:
+textcolor <255, 255, 255>
+backgroundcolor <255, 255, 255>
+whirlcolor <255, 255, 255>
+imagesize <1.0, 1.0, 0.0>
+imagesize tall
+imagesize wide
+pause 5
+textpause 4
+textfade 0.5
+whirlalpha 1.0
+imagealpha 1.0
+whirlspeed 0.3
+loopvolume 1.0
+volume 1.0
+whirlimage spiral.png
+image awake.gif
+image no image
+image noimage
+loopsound
+sound
+jump 0
