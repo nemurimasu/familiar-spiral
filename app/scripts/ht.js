@@ -419,7 +419,7 @@
         this.rotTarget = this.spiralImage = $(document.createElement('div')).attr({id: 'spiral'}).insertAfter(this.image);
       }
     }
-    this.setSpiralImage('spiral.png');
+    this.setSpiralImage('images/spiral.png');
     if (Modernizr.cssanimations) {
       $.extend(this, this.CSSANIM);
       this.rotTarget.addClass('spin');
