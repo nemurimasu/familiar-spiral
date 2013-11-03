@@ -635,7 +635,6 @@
   };
   function AjaxScriptSource(url, reader) {
     $.get(url, function(data) {
-      console.log('f');
       reader.addLines(data.split('\n'));
     }, 'html').error(function(e) {alert(e);});
   }
@@ -646,28 +645,21 @@
     var text;
     var reader;
     var scriptSource;
-    console.log('a');
     try {
       spiral = new WebGlSpiral();
     } catch (e) {
-      console.log(e);
       spiral = new NativeSpiral();
     }
-    console.log('b');
     try {
       audio = new NativeAudio();
     } catch (e) {
-      console.log(e);
     }
-    console.log('c');
     text = new TextHandler();
     reader = new ScriptReader(spiral, text, audio);
-    console.log('d');
     try {
       scriptSource = new TagScriptSource(reader);
     } catch(e) {
       scriptSource = new AjaxScriptSource('1.txt', reader);
     }
-    console.log('e');
   });
 })();
