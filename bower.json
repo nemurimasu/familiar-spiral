@@ -2,6 +2,7 @@
   "name": "ht",
   "version": "0.0.0",
   "dependencies": {
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "modernizr": "~2.6.2"
   }
 }

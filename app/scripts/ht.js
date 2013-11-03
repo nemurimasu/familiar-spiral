@@ -6,27 +6,10 @@
     console.log = function(){};
   var expcss = {
     expcss: function(prop, val) {
-      var css = {};
-      $(['-moz-', '-webkit-', '-o-', '-ms-', '']).each(function(i, v) {
-        css[v + prop] = val;
-      });
-      // IE9 is broken and does not handle css properly
+      prop = Modernizr.prefixed(prop);
       this.each(function(i, v) {
-        v.style['-ms-' + prop] = val;
+        v.style[prop] = val;
       });
-      return this.css(css);
-    },
-    expcssval: function(prop, val) {
-      var css = {};
-      $(['-moz-', '-webkit-', '-o-', '-ms-', '']).each(function(i, v) {
-        css[v + prop] = v + val;
-      });
-      // IE9 is broken and does not handle css properly
-      this.each(function(i, v) {
-        v.style['-ms-' + prop] = '-ms-' + val;
-      });
-      this.expcss(prop, val);
-      return this.css(css);
     }
   };
   $.extend($.prototype, expcss);
@@ -172,14 +155,12 @@
   };
   function WebGlSpiral() {
     this.unboundDraw = $.proxy(this.draw, this);
-    window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(proc) { window.setTimeout(proc, 1000 / 30); };
+    window.requestAnimationFrame = Modernizr.prefixed('requestAnimationFrame', window) || function(proc) { window.setTimeout(proc, 1000 / 30); };
 
-    this.canvas = document.createElement('canvas');
-    if (!this.canvas.getContext)
-      throw 'canvas unsupported';
-    this.context = this.canvas.getContext('experimental-webgl');
-    if (!this.context)
+    if (!Modernizr.webgl)
       throw 'webgl unsupported';
+    this.canvas = document.createElement('canvas');
+    this.context = this.canvas.getContext('experimental-webgl');
     $(this.canvas).attr({id: 'web-gl-spiral'}).prependTo(document.body);
 
     var psh = this.context.createShader(this.context.FRAGMENT_SHADER);
@@ -261,7 +242,7 @@
       this.loopTag.volume = volume;
     },
     addSources: function(tag, src) {
-      $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).map(function(i, e) {
+      $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).filter(function(e) { return Modernizr.audio[e[0]]; }).map(function(i, e) {
         return $(document.createElement('source')).attr({src: src + '.' + e[0], type: e[1]})[0];
       }));
     },
@@ -282,7 +263,7 @@
   };
   function NativeAudio() {
     this.loopTag = document.createElement('audio');
-    if (!this.loopTag.canPlayType) {
+    if (!Modernizr.audio.ogg && !Modernizr.audio.mp3) {
       throw 'audio unsupported';
     }
     $(this.loopTag).attr({preload: true, autoplay: true, loop: true, volume: 1.0}).appendTo(document.body);
@@ -439,7 +420,7 @@
       }
     }
     this.setSpiralImage('spiral.png');
-    if (document.body.style.WebkitAnimation != undefined) {
+    if (Modernizr.cssanimations) {
       $.extend(this, this.CSSANIM);
       this.rotTarget.addClass('spin');
     } else {
@@ -501,7 +482,7 @@
       this.tag1.addClass('shadowed');
     }
     this.tags = $('#text, #text-shadow');
-    if (this.tag1[0].style.transition != undefined || this.tag1[0].style.MozTransition != undefined || this.tag1[0].style.WebkitTransition != undefined || this.tag1[0].style.OTransition != undefined) {
+    if (Modernizr.csstransitions) {
       $.extend(this, this.CSS);
       this.tag1.bind('transitionend oTransitionEnd webkitTransitionEnd', {to: this}, function(event) {return event.data.to.callback(event);});
     } else {
