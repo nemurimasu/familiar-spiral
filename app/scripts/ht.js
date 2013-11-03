@@ -242,7 +242,7 @@
 
     this.spiralTexture = this.context.createTexture();
     this.imageTexture = this.context.createTexture();
-    this.setSpiralImage('spiral.png');
+    this.setSpiralImage('images/spiral.png');
     this.clearImage();
 
     $(window).resize({spiral: this}, function(event) { event.data.spiral.resize($(window).width(), $(window).height()); });
