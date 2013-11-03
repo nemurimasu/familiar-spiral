@@ -534,7 +534,7 @@
           } else if (part == '%oname') {
             return '<Owner Full Name>';
           } else if (part == '%ofn') {
-            return '<Ovner First Name>';
+            return '<Owner First Name>';
           } else if (part == '%oln') {
             return '<Owner Last Name>';
           } else {
