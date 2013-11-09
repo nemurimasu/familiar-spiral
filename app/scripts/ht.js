@@ -160,7 +160,9 @@
     if (!Modernizr.webgl)
       throw 'webgl unsupported';
     this.canvas = document.createElement('canvas');
-    this.context = this.canvas.getContext('experimental-webgl');
+    this.context = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+    if (!this.context)
+      throw 'webgl unsupported';
     $(this.canvas).attr({id: 'web-gl-spiral'}).prependTo(document.body);
 
     var psh = this.context.createShader(this.context.FRAGMENT_SHADER);
