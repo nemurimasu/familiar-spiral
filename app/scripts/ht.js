@@ -393,7 +393,7 @@
   };
   function NativeSpiral() {
     this.image = $(document.createElement('div')).attr({id: 'image'}).prependTo(document.body);
-    if (document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicFilter', '1.1')) {
+    if (Modernizr.svgfilters) {
       $.extend(this, this.SVG);
       var svgNS = 'http://www.w3.org/2000/svg';
       var svg;
