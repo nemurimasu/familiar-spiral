@@ -149,6 +149,7 @@
         this.baseRot += 2.0 * Math.PI;
       while (this.baseRot >= 2.0 * Math.PI)
         this.baseRot -= 2.0 * Math.PI;
+      this.rotPeriod = wl * 1000;
     },
     clearImage: function() {
       this.setImage(this.blankImageData);
@@ -376,6 +377,7 @@
           this.baseRot += 360;
         while (this.baseRot >= 360)
           this.baseRot -= 360;
+        this.rotPeriod = wl * 1000;
       }
     },
     setSpiralAlpha: function(a) {
