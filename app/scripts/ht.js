@@ -31,22 +31,23 @@
     blankImageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQIHWNgYAAAAAMAAU9ICq8AAAAASUVORK5CYII=',
     draw: function() {
       window.requestAnimationFrame(this.unboundDraw);
+      var context = this.context, canvas = this.canvas, shader = this.shader;
 
-      this.context.viewport(0, 0, this.canvas.width, this.canvas.height);
+      context.viewport(0, 0, canvas.width, canvas.height);
 
-      this.context.clear(this.context.COLOR_BUFFER_BIT);
+      context.clear(context.COLOR_BUFFER_BIT);
 
-      this.context.uniform2fv(this.shader.scale, this.imageScale);
-      this.context.uniform1f(this.shader.rot, 0.0);
-      this.context.uniform4fv(this.shader.color, this.imageColor);
-      this.context.uniform1i(this.shader.texture, 1);
-      this.context.drawArrays(this.context.TRIANGLE_STRIP, 0, 4);
+      context.uniform2fv(shader.scale, this.imageScale);
+      context.uniform1f(shader.rot, 0.0);
+      context.uniform4fv(shader.color, this.imageColor);
+      context.uniform1i(shader.texture, 1);
+      context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
 
-      this.context.uniform2fv(this.shader.scale, this.spiralScale);
-      this.context.uniform1f(this.shader.rot, this.baseRot + -2.0 * Math.PI * (($.now() - this.baseTime) % this.rotPeriod) / this.rotPeriod);
-      this.context.uniform4fv(this.shader.color, this.spiralColor);
-      this.context.uniform1i(this.shader.texture, 0);
-      this.context.drawArrays(this.context.TRIANGLE_STRIP, 0, 4);
+      context.uniform2fv(shader.scale, this.spiralScale);
+      context.uniform1f(shader.rot, this.baseRot + -2.0 * Math.PI * (($.now() - this.baseTime) % this.rotPeriod) / this.rotPeriod);
+      context.uniform4fv(shader.color, this.spiralColor);
+      context.uniform1i(shader.texture, 0);
+      context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     },
     resize: function(w, h) {
       this.canvas.width = w;
