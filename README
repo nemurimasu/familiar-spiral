@@ -1,6 +1,6 @@
 This reads scripts in the K&K Hypno Hud format, more or less.
 
-The script will be read from a <script type="text/x-hypno"> tag, or from 1.txt if there is no script tag.
+The script will be read from a <script type="text/x-hypno"> tag, or from 1.txt if there is no script tag. You can also drag and drop a script from your desktop if your browser supports drag and drop.
 
 Tested in Safari, Firefox, Chrome, Mobile Safari(!), IE9(!!). Mobile Safari has no sound due to limitations put in place by Apple.
 

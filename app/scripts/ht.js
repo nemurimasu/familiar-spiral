@@ -550,6 +550,11 @@
         this.hide();
       }
     },
+    clear: function(lines) {
+      var oldLen = this.lines.length;
+      this.lines = [];
+      this.pos = 0;
+    },
     handleCommand: function(cmd) {
       var match;
       if (match = cmd.match(/^textcolor\s+<(\d*\.?\d*),\s*(\d*\.?\d*),\s*(\d*\.?\d*)>/)) {
@@ -625,6 +630,7 @@
   };
 
   TagScriptSource.prototype = {
+    abort: function() { }
   };
   function TagScriptSource(reader) {
     var tag = $('script[type="text/x-hypno"]');
@@ -634,11 +640,39 @@
   }
 
   AjaxScriptSource.prototype = {
+    abort: function() {
+      if (this.req !== undefined)
+      {
+        this.req.abort();
+        this.req = undefined;
+      }
+    }
   };
   function AjaxScriptSource(url, reader) {
-    $.get(url, function(data) {
+    this.req = $.get(url, function(data) {
       reader.addLines(data.split('\n'));
+      this.req = undefined;
     }, 'html').error(function(e) {alert(e);});
+  }
+
+  FileScriptSource.prototype = {
+    abort: function() {
+      if (this.fileReader !== undefined)
+      {
+        this.fileReader.abort();
+      }
+    }
+  };
+  function FileScriptSource(file, reader) {
+    var fileReader = this.fileReader = $.extend(new FileReader(), {
+      onloadend: function() {
+        this.fileReader = undefined;
+      },
+      onload: function() {
+        reader.addLines(fileReader.result.split('\n').map(function(v) { return $.trim(v); }));
+      }
+    });
+    fileReader.readAsText(file);
   }
 
   $(document).ready(function() {
@@ -663,5 +697,25 @@
     } catch(e) {
       scriptSource = new AjaxScriptSource('1.txt', reader);
     }
+
+    var body = $(document.body);
+    body.on('dragover', function(event) {
+      var dt = event.originalEvent.dataTransfer;
+      var items = dt.items;
+      if (items.length == 1 && items[0].kind === 'file')
+      {
+        event.stopPropagation();
+        event.preventDefault();
+        dt.dropEffect = 'copy';
+      }
+    });
+    body.on('drop', function(event) {
+      event.stopPropagation();
+      event.preventDefault();
+      var file = event.originalEvent.dataTransfer.items[0].getAsFile();
+      scriptSource.abort();
+      reader.clear();
+      scriptSource = new FileScriptSource(file, reader);
+    });
   });
 })();
