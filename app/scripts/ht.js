@@ -478,11 +478,10 @@
   };
   function TextHandler() {
     this.tag1 = $('#text');
-    // disable text-shadow because it does not work in Windows Chrome
-    if (true || this.tag1[0].style.textShadow == undefined) {
-      this.tag2 = $(document.createElement('div')).attr({id: 'text-shadow'}).insertBefore(this.tag1);
-    } else {
+    if (Modernizr.textshadow) {
       this.tag1.addClass('shadowed');
+    } else {
+      this.tag2 = $(document.createElement('div')).attr({id: 'text-shadow'}).insertBefore(this.tag1);
     }
     this.tags = $('#text, #text-shadow');
     if (Modernizr.csstransitions) {
