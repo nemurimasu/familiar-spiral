@@ -227,7 +227,7 @@
 
     this.spiralTexture = this.context.createTexture();
     this.imageTexture = this.context.createTexture();
-    this.setSpiralImage('images/spiral.png');
+    this.setSpiralImage(this.blankImageData);
     this.clearImage();
 
     $(window).resize({spiral: this}, function(event) { event.data.spiral.resize($(window).width(), $(window).height()); });
@@ -263,6 +263,13 @@
       });
       this.addSources(tag, src);
       this.tags.push(tag);
+    },
+    stopLoop: function() {
+      $(this.loopTag).empty();
+    },
+    stopSounds: function() {
+      $(this.tags).remove();
+      this.tags = [];
     }
   };
   function NativeAudio() {
@@ -424,7 +431,6 @@
         this.rotTarget = this.spiralImage = $(document.createElement('div')).attr({id: 'spiral'}).insertAfter(this.image);
       }
     }
-    this.setSpiralImage('images/spiral.png');
     if (Modernizr.cssanimations) {
       $.extend(this, this.CSSANIM);
       this.rotTarget.addClass('spin');
@@ -499,12 +505,9 @@
     spiral: null,
     text: null,
     audio: null,
-    lines: [],
-    pos: 0,
     unboundHide: null,
     unboundShow: null,
     unboundHover: null,
-    textPause: 4000,
     filter: function(line) {
       return line.split(/(%\S+)/).map(function(part) {
         if (part[0] == '%') {
@@ -552,10 +555,32 @@
         this.hide();
       }
     },
-    clear: function(lines) {
-      var oldLen = this.lines.length;
+    reset: function(lines) {
       this.lines = [];
       this.pos = 0;
+      this.textPause = 4000;
+
+      var text = this.text, spiral = this.spiral, audio = this.audio;
+      if (text) {
+        text.setColor(1.0, 1.0, 1.0);
+        text.setFadeDuration(500);
+      }
+      if (spiral) {
+        spiral.setBackground(0.0, 0.0, 0.0);
+        spiral.setSpiralColor(1.0, 1.0, 1.0);
+        spiral.setImageScale(0.95, 0.95);
+        spiral.setSpiralAlpha(1.0);
+        spiral.setImageAlpha(1.0);
+        spiral.setRotationPeriod(10);
+        spiral.setSpiralImage('images/spiral.png');
+        spiral.clearImage();
+      }
+      if (audio) {
+        audio.setLoopVolume(1.0);
+        audio.setVolume(1.0);
+        audio.stopLoop();
+        audio.stopSounds();
+      }
     },
     handleCommand: function(cmd) {
       var match;
@@ -629,6 +654,7 @@
     this.unboundHide = $.proxy(this.hide, this);
     this.unboundShow = $.proxy(this.show, this);
     this.unboundHover = $.proxy(this.hover, this);
+    this.reset();
   };
 
   TagScriptSource.prototype = {
@@ -716,7 +742,7 @@
       event.preventDefault();
       var file = event.originalEvent.dataTransfer.items[0].getAsFile();
       scriptSource.abort();
-      reader.clear();
+      reader.reset();
       scriptSource = new FileScriptSource(file, reader);
     });
   });
