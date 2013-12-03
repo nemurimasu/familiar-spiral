@@ -123,6 +123,26 @@ module.exports = function (grunt) {
                 }
             }
         },
+        preprocess: {
+          dist: {
+            options: {
+              inline: true,
+              context: {
+                DEMO: false
+              }
+            },
+            src: '<%= yeoman.dist %>/index.html'
+          },
+          demo: {
+            options: {
+              inline: true,
+              context: {
+                DEMO: true
+              }
+            },
+            src: '<%= yeoman.dist %>/index.html'
+          }
+        },
         useminPrepare: {
             options: {
                 dest: '<%= yeoman.dist %>'
@@ -237,7 +257,22 @@ module.exports = function (grunt) {
         'modernizr',
         'copy:dist',
         'rev',
-        'usemin'
+        'usemin',
+        'preprocess:dist'
+    ]);
+
+    grunt.registerTask('demo', [
+        'clean:dist',
+        'useminPrepare',
+        'concurrent:dist',
+        'autoprefixer',
+        'concat',
+        'uglify',
+        'modernizr',
+        'copy:dist',
+        'rev',
+        'usemin',
+        'preprocess:demo'
     ]);
 
     grunt.registerTask('default', [
