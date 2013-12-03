@@ -318,6 +318,9 @@
       spiralColor: [1.0, 1.0, 1.0],
       spiralTexture: null,
       recolor: function() {
+        if (this.spiralTexture === null) {
+          return;
+        }
         this.spiralImage.width = this.spiralTexture.width;
         this.spiralImage.height = this.spiralTexture.height;
         this.context.clearRect(0, 0, this.spiralImage.width, this.spiralImage.height);
