@@ -299,10 +299,10 @@
       colorMatrix: null,
       xlinkNS: 'http://www.w3.org/1999/xlink',
       setSpiralImage: function(img) {
-        this.spiralImage[0].setAttributeNS(this.xlinkNS, 'href', img);
+        this.spiralImage.setAttributeNS(this.xlinkNS, 'href', img);
       },
       setSpiralColor: function(r, g, b) {
-        this.colorMatrix.attr({values: r + ' 0 0 0 0 0 ' + g + ' 0 0 0 0 0 ' + b + ' 0 0 0 0 0 1 0'});
+        this.colorMatrix.setAttribute('values', r + ' 0 0 0 0 0 ' + g + ' 0 0 0 0 0 ' + b + ' 0 0 0 0 0 1 0');
       }
     },
     IMG: {
@@ -408,14 +408,22 @@
     if (Modernizr.svgfilters) {
       $.extend(this, this.SVG);
       var svgNS = 'http://www.w3.org/2000/svg';
-      var svg;
-      this.rotTarget = svg = $(document.createElementNS(svgNS, 'svg')).attr({id: 'spiral', viewBox: '0 0 1 1', version: '1.1'});
-      var defs = $(document.createElementNS(svgNS, 'defs')).appendTo(svg);
-      var filter = $(document.createElementNS(svgNS, 'filter')).attr({id: 'm'}).appendTo(defs);
-      this.colorMatrix = $(document.createElementNS(svgNS, 'feColorMatrix')).attr({type: 'matrix'}).appendTo(filter);
+      var svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('id', 'spiral');
+      svg.setAttribute('viewBox', '0 0 1 1');
+      svg.setAttribute('version', '1.1');
+      this.rotTarget = $(svg);
+      var defs = svg.insertBefore(document.createElementNS(svgNS, 'defs'), null);
+      var filter = defs.insertBefore(document.createElementNS(svgNS, 'filter'), null);
+      filter.setAttribute('id', 'm');
+      this.colorMatrix = filter.insertBefore(document.createElementNS(svgNS, 'feColorMatrix'), null);
+      this.colorMatrix.setAttribute('type', 'matrix');
       this.setSpiralColor(1, 1, 1);
-      this.spiralImage = $(document.createElementNS(svgNS, 'image')).attr({width: 1, height: 1, filter: 'url(#m)'}).appendTo(svg);
-      svg.insertAfter(this.image);
+      this.spiralImage = svg.insertBefore(document.createElementNS(svgNS, 'image'), null);
+      this.spiralImage.setAttribute('width', '1');
+      this.spiralImage.setAttribute('height', '1');
+      this.spiralImage.setAttribute('filter', 'url(#m)');
+      $(svg).insertAfter(this.image);
     } else {
       var canvas = document.createElement('canvas');
       if (canvas.getContext) {
@@ -433,7 +441,7 @@
     }
     if (Modernizr.cssanimations) {
       $.extend(this, this.CSSANIM);
-      this.rotTarget.addClass('spin');
+      this.rotTarget.attr('class', 'spin');
     } else {
       $.extend(this, this.JS);
       this.unboundRotate = $.proxy(this.rotate, this);
