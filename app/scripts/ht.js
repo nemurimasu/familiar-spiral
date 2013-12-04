@@ -408,7 +408,7 @@
   };
   function NativeSpiral() {
     this.image = $(document.createElement('div')).attr({id: 'image'}).prependTo(document.body);
-    if (Modernizr.svgfilters) {
+    if (Modernizr.inlinesvg && Modernizr.svgfilters) {
       $.extend(this, this.SVG);
       var svgNS = 'http://www.w3.org/2000/svg';
       var svg = document.createElementNS(svgNS, 'svg');
@@ -503,7 +503,7 @@
       this.tag2 = $(document.createElement('div')).attr({id: 'text-shadow'}).insertBefore(this.tag1);
     }
     this.tags = $('#text, #text-shadow');
-    if (Modernizr.csstransitions) {
+    if (Modernizr.csstransitions && !navigator.userAgent.match(/SecondLife\//)) {
       $.extend(this, this.CSS);
       this.tag1.bind('transitionend oTransitionEnd webkitTransitionEnd', {to: this}, function(event) {return event.data.to.callback(event);});
     } else {
