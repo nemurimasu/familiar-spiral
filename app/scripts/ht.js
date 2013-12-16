@@ -828,7 +828,7 @@
           }
         }
         var relative = {};
-        var leader = script.match(/[^\/]+/);
+        var leader = script.match(/[^\/]+\//);
         if (leader) {
           relative = {};
           for (var path in urls) {
