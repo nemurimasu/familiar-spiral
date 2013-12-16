@@ -744,11 +744,14 @@
     body.on('dragover', function(event) {
       var dt = event.originalEvent.dataTransfer;
       var types = dt.types;
-      if (types.length === 1 && types[0] === 'Files')
-      {
-        event.stopPropagation();
-        event.preventDefault();
-        dt.dropEffect = 'copy';
+      for (var i = 0; i < types.length; i++) {
+        if (types[i] === 'Files')
+        {
+          event.stopPropagation();
+          event.preventDefault();
+          dt.dropEffect = 'copy';
+          return;
+        }
       }
     });
     body.on('drop', function(event) {
