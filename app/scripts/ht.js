@@ -705,9 +705,10 @@
     }
   };
   function FileScriptSource(file, reader) {
+    var self = this;
     var fileReader = this.fileReader = $.extend(new FileReader(), {
       onloadend: function() {
-        this.fileReader = undefined;
+        self.fileReader = undefined;
       },
       onload: function() {
         reader.addLines(fileReader.result.split('\n').map(function(v) { return $.trim(v); }));
