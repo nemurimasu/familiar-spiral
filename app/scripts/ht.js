@@ -758,7 +758,7 @@
       event.stopPropagation();
       event.preventDefault();
 
-      var files = event.originalEvent.dataTransfer.items;
+      var files = event.originalEvent.dataTransfer.items || event.originalEvent.dataTransfer.files;
       var urls = {};
       var pending = 1;
       var promise = $.Deferred();
@@ -801,7 +801,11 @@
       } else {
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
-          processFile(file.getAsFile(), file.name);
+          if (file.getAsFile) {
+            // if we used .files instead of .items then we don't need to do this
+            file = file.getAsFile();
+          }
+          processFile(file, file.name);
         }
       }
       if (--pending === 0) {
