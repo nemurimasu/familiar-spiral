@@ -245,15 +245,15 @@
     setLoopVolume: function(volume) {
       this.loopTag.volume = volume;
     },
-    addSources: function(tag, src) {
+    addSources: function(tag, src, translateUrl) {
       $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).filter(function(i, e) { return Modernizr.audio[e[0]]; }).map(function(i, e) {
-        return $(document.createElement('source')).attr({src: src + '.' + e[0], type: e[1]})[0];
+        return $(document.createElement('source')).attr({src: translateUrl(src + '.' + e[0]), type: e[1]})[0];
       }));
     },
-    playLoop: function(src) {
-      this.addSources(this.loopTag, src);
+    playLoop: function(src, translateUrl) {
+      this.addSources(this.loopTag, src, translateUrl);
     },
-    play: function(src) {
+    play: function(src, translateUrl) {
       var tag = document.createElement('audio');
       $(tag).attr({preload: true, autoplay: true, volume: this.volume}).appendTo(document.body);
       $(tag).bind('ended', {na: this}, function(event) {
@@ -261,7 +261,7 @@
         if (index != -1)
           $(event.data.na.tags.splice(index, 1)).remove();
       });
-      this.addSources(tag, src);
+      this.addSources(tag, src, translateUrl);
       this.tags.push(tag);
     },
     stopLoop: function() {
@@ -571,6 +571,8 @@
       this.pos = 0;
       this.textPause = 4000;
 
+      this.translateUrl = function(f) { return f; };
+
       var text = this.text, spiral = this.spiral, audio = this.audio;
       if (text) {
         text.setColor(1.0, 1.0, 1.0);
@@ -632,17 +634,17 @@
       } else if (match = cmd.match(/^volume\s+(\d*\.?\d*)/)) {
         this.audio.setVolume(parseFloat(match[1]));
       } else if (match = cmd.match(/^whirlimage\s+([^'"()]*)/)) {
-        this.spiral.setSpiralImage(match[1]);
+        this.spiral.setSpiralImage(this.translateUrl(match[1]));
       } else if (match = cmd.match(/^image\s+([^'"()]*)/)) {
         if (match[1] == 'no image' || match[1] == 'noimage') {
           this.spiral.clearImage();
         } else {
-          this.spiral.setImage(match[1]);
+          this.spiral.setImage(this.translateUrl(match[1]));
         }
       } else if (match = cmd.match(/^loopsound\s+(.*)/)) {
-        this.audio.playLoop(match[1]);
+        this.audio.playLoop(match[1], this.translateUrl);
       } else if (match = cmd.match(/^sound\s+(.*)/)) {
-        this.audio.play(match[1]);
+        this.audio.play(match[1], this.translateUrl);
       } else if (match = cmd.match(/^jump\s+(\d+)/)) {
         this.pos = parseInt(match[1]);
         // TODO: need to watch for tight infinite loops
@@ -740,8 +742,8 @@
     var body = $(document.body);
     body.on('dragover', function(event) {
       var dt = event.originalEvent.dataTransfer;
-      var items = dt.items;
-      if (items.length == 1 && items[0].kind === 'file')
+      var types = dt.types;
+      if (types.length === 1 && types[0] === 'Files')
       {
         event.stopPropagation();
         event.preventDefault();
@@ -751,10 +753,103 @@
     body.on('drop', function(event) {
       event.stopPropagation();
       event.preventDefault();
-      var file = event.originalEvent.dataTransfer.items[0].getAsFile();
-      scriptSource.abort();
-      reader.reset();
-      scriptSource = new FileScriptSource(file, reader);
+
+      var files = event.originalEvent.dataTransfer.items;
+      var urls = {};
+      var pending = 1;
+      var promise = $.Deferred();
+
+      var processFile = function(file, name) {
+        urls[name] = file;
+      };
+
+      var getAsEntry = Modernizr.prefixed('getAsEntry', files[0], false);
+      if (getAsEntry) {
+        var processEntry = function(entry) {
+          pending++;
+          if (entry.isDirectory) {
+            var dirReader = entry.createReader();
+            dirReader.readEntries(function(entries) {
+              for (var i = 0; i < entries.length; i++) {
+                processEntry(entries[i]);
+              }
+              if (--pending === 0) {
+                promise.resolve();
+              }
+            }, function(err) {
+              promise.reject(err);
+            });
+          } else if (entry.isFile) {
+            entry.file(function(file) {
+              processFile(file, entry.fullPath.substring(1));
+              if (--pending === 0) {
+                promise.resolve();
+              }
+            }, function(err) {
+              promise.reject(err);
+            });
+          }
+        };
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          processEntry(file[getAsEntry].bind(file)());
+        }
+      } else {
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          processFile(file.getAsFile(), file.name);
+        }
+      }
+      if (--pending === 0) {
+        promise.resolve();
+      }
+      promise.done(function() {
+        var script = null;
+        var scriptScore = 0;
+        for (var path in urls) {
+          var myScore = 1;
+          if (path.match(/\.txt$/i)) {
+            myScore = 100;
+          } else if (urls[path].type.match(/^text\//)) {
+            myScore = 10;
+          }
+          if (!path.match(/\//)) {
+            myScore *= 10;
+          } else if (path.match(/^([^\/]+)\/\1(?:\.|$)/)) {
+            myScore *= 5;
+          }
+          if (myScore > scriptScore) {
+            script = path;
+            scriptScore = myScore;
+          }
+        }
+        var relative = {};
+        var leader = script.match(/[^\/]+/);
+        if (leader) {
+          relative = {};
+          for (var path in urls) {
+            var stripped = path.match(/([^\/]+)\/(.*)$/);
+            if (stripped[1] === leader[0]) {
+              relative[stripped[2]] = urls[path];
+            }
+          }
+        } else {
+          relative = urls;
+        }
+        scriptSource.abort();
+        reader.reset();
+        reader.translateUrl = function(url) {
+          if (url.match(/^[^\/]+:\/\//)) {
+            return url;
+          }
+          var mapped = relative[url];
+          if (mapped) {
+            return URL.createObjectURL(mapped);
+          }
+          return url;
+        };
+        scriptSource = new FileScriptSource(urls[script], reader);
+      });
     });
   });
 })();
