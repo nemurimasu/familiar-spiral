@@ -246,7 +246,7 @@
       this.loopTag.volume = volume;
     },
     addSources: function(tag, src) {
-      $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).filter(function(e) { return Modernizr.audio[e[0]]; }).map(function(i, e) {
+      $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).filter(function(i, e) { return Modernizr.audio[e[0]]; }).map(function(i, e) {
         return $(document.createElement('source')).attr({src: src + '.' + e[0], type: e[1]})[0];
       }));
     },
