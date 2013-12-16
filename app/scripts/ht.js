@@ -1,4 +1,4 @@
-(function() {
+define(['jquery'], function($) {
   var console = window.console;
   if (console == undefined)
     console = {};
@@ -860,4 +860,4 @@
       });
     });
   });
-})();
+});
