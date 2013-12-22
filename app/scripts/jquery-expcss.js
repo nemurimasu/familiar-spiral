@@ -5,6 +5,7 @@ define(['jquery'], function($) {
         this.each(function(i, v) {
             v.style[prop] = val;
         });
+        return this;
     };
     return $;
 });
