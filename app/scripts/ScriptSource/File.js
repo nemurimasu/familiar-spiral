@@ -1,23 +1,23 @@
 define(['jquery'], function($) {
-  FileScriptSource.prototype = {
-    abort: function() {
-      if (this.fileReader !== undefined)
-      {
-        this.fileReader.abort();
-      }
+    'use strict';
+    function FileScriptSource(file, reader) {
+        var self = this;
+        var fileReader = this.fileReader = $.extend(new FileReader(), {
+            onloadend: function() {
+                self.fileReader = undefined;
+            },
+            onload: function() {
+                reader.addLines(fileReader.result.split('\n').map(function(v) { return $.trim(v); }));
+            }
+        });
+        fileReader.readAsText(file);
     }
-  };
-  function FileScriptSource(file, reader) {
-    var self = this;
-    var fileReader = this.fileReader = $.extend(new FileReader(), {
-      onloadend: function() {
-        self.fileReader = undefined;
-      },
-      onload: function() {
-        reader.addLines(fileReader.result.split('\n').map(function(v) { return $.trim(v); }));
-      }
-    });
-    fileReader.readAsText(file);
-  }
-  return FileScriptSource;
+    FileScriptSource.prototype = {
+        abort: function() {
+            if (this.fileReader !== undefined) {
+                this.fileReader.abort();
+            }
+        }
+    };
+    return FileScriptSource;
 });

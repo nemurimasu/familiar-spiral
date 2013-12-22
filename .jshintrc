@@ -20,5 +20,7 @@
     "smarttabs": true,
     "jquery": true,
     "globals": {
+        "define": true,
+        "Modernizr": true
     }
 }

@@ -1,35 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta content="width=device-width, user-scalable=no" name="viewport" />
-    <!-- build:css(.tmp) styles/main.css -->
-    <link href="styles/style.css" rel="stylesheet" />
-    <!-- endbuild -->
-    <!-- build:js scripts/vendor/modernizr.js -->
-    <script src="bower_components/modernizr/modernizr.js"></script>
-    <script src="bower_components/modernizr/feature-detects/svg-filters.js"></script>
-    <!-- endbuild -->
-  </head>
-  <body>
-    <div id="text">
-      Loading...
-    </div>
-    <script type="text/x-hypno">
-      -textcolor <200,0,255>
-      -backgroundcolor <127,127,127>
-      -image images/awake.gif
-      -textpause 2
-      -whirlalpha 0.5
-      Relax
-      Sleep
-      Nyan
-      -jump 5
-    </script>
-    <!-- build:js scripts/main.js -->
-    <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
-    <!-- endbuild -->
-    <!-- @if DEMO -->
-    <a href="https://github.com/nemurimasu/familiar-spiral/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
-    <!-- @endif -->
-  </body>
+    <head>
+        <meta content="width=device-width, user-scalable=no" name="viewport" />
+        <!-- build:css(.tmp) styles/main.css -->
+        <link href="styles/style.css" rel="stylesheet" />
+        <!-- endbuild -->
+        <!-- build:js scripts/vendor/modernizr.js -->
+        <script src="bower_components/modernizr/modernizr.js"></script>
+        <script src="bower_components/modernizr/feature-detects/svg-filters.js"></script>
+        <script src="bower_components/modernizr/feature-detects/blob-constructor.js"></script>
+        <!-- endbuild -->
+    </head>
+    <body>
+        <div id="text">
+            Loading...
+        </div>
+        <script type="text/x-hypno">
+            -textcolor <200,0,255>
+            -backgroundcolor <127,127,127>
+            -image images/awake.gif
+            -textpause 2
+            -whirlalpha 0.5
+            Relax
+            Sleep
+            Nyan
+            -jump 5
+        </script>
+        <!-- @exclude -->
+        <script src="bower_components/requirejs/require.js"></script>
+        <script src="scripts/requirejs-config.js"></script>
+        <script>require(['ht']);</script>
+        <!-- @endexclude -->
+        <!-- @include ../.tmp/scripttag.html -->
+        <!-- @if DEMO -->
+        <a href="https://github.com/nemurimasu/familiar-spiral/">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub">
+        </a>
+        <!-- @endif -->
+    </body>
 </html>

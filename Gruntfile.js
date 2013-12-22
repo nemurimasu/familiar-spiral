@@ -1,11 +1,4 @@
-// Generated on 2013-11-03 using generator-webapp 0.4.3
 'use strict';
-
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
     // show elapsed time at the end
@@ -15,13 +8,13 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         // configurable paths
-        yeoman: {
+        directories: {
             app: 'app',
             dist: 'dist'
         },
         watch: {
             styles: {
-                files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
+                files: ['<%= directories.app %>/styles/{,*/}*.css'],
                 tasks: ['copy:styles', 'autoprefixer']
             },
             livereload: {
@@ -29,10 +22,10 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
-                    '<%= yeoman.app %>/*.html',
+                    '<%= directories.app %>/*.html',
                     '.tmp/styles/{,*/}*.css',
-                    '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
-                    '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                    '{.tmp,<%= directories.app %>}/scripts/{,*/}*.js',
+                    '<%= directories.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
         },
@@ -48,14 +41,14 @@ module.exports = function (grunt) {
                     open: true,
                     base: [
                         '.tmp',
-                        '<%= yeoman.app %>'
+                        '<%= directories.app %>'
                     ]
                 }
             },
             dist: {
                 options: {
                     open: true,
-                    base: '<%= yeoman.dist %>'
+                    base: '<%= directories.dist %>'
                 }
             }
         },
@@ -65,8 +58,8 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
-                        '<%= yeoman.dist %>/*',
-                        '!<%= yeoman.dist %>/.git*'
+                        '<%= directories.dist %>/*',
+                        '!<%= directories.dist %>/.git*'
                     ]
                 }]
             },
@@ -78,8 +71,8 @@ module.exports = function (grunt) {
             },
             all: [
                 'Gruntfile.js',
-                '<%= yeoman.app %>/scripts/{,*/}*.js',
-                '!<%= yeoman.app %>/scripts/vendor/*',
+                '<%= directories.app %>/scripts/{,*/}*.js',
+                '!<%= directories.app %>/scripts/vendor/*',
             ]
         },
         autoprefixer: {
@@ -95,93 +88,115 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        // not used since Uglify task does concat,
-        // but still available if needed
-        /*concat: {
-            dist: {}
-        },*/
-        'bower-install': {
-            app: {
-                html: '<%= yeoman.app %>/index.html',
-                ignorePath: '<%= yeoman.app %>/'
+        concat: {
+            requirejs: {
+                src: ['.tmp/require.min.js', '.tmp/requirejs/ht.js'],
+                dest: '<%= directories.dist %>/scripts/ht.js'
+            },
+            style: {
+                src: ['.tmp/styles/{,*/}*.css'],
+                dest: '<%= directories.dist %>/styles/main.css'
             }
         },
-        // not enabled since usemin task does concat and uglify
-        // check index.html to edit your build targets
-        // enable this task if you prefer defining your build targets here
-        /*uglify: {
-            dist: {}
-        },*/
+        'bower-install': {
+            app: {
+                html: '<%= directories.app %>/index.html',
+                ignorePath: '<%= directories.app %>/'
+            }
+        },
+        uglify: {
+            config: {
+                files: {
+                    '.tmp/require.min.js': ['<%= directories.app %>/bower_components/requirejs/require.js', '.tmp/require-config.js']
+                }
+            }
+        },
         requirejs: {
             dist: {
                 // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
                 options: {
-                    // `name` and `out` is set by grunt-usemin
-                    baseUrl: '<%= yeoman.app %>/scripts',
-                    optimize: 'none',
-                    // TODO: Figure out how to make sourcemaps work with grunt-usemin
-                    // https://github.com/yeoman/grunt-usemin/issues/30
-                    //generateSourceMaps: true,
-                    // required to support SourceMaps
-                    // http://requirejs.org/docs/errors.html#sourcemapcomments
+                    baseUrl: '<%= directories.app %>/scripts',
+                    dir: '.tmp/requirejs',
+                    mainConfigFile: '<%= directories.app %>/scripts/requirejs-config.js',
+                    modules: [
+                        {
+                            name: 'ZipLoader'
+                        },
+                        {
+                            name: 'ht',
+                            exclude: ['ZipLoader'],
+                            insertRequire: ['ht']
+                        }
+                    ],
+                    optimize: 'uglify2',
+                    generateSourceMaps: false,
                     preserveLicenseComments: false,
+                    removeCombined: true,
                     useStrict: true,
-                    wrap: true
-                    //uglify2: {} // https://github.com/mishoo/UglifyJS2
+                    skipDirOptimize: true,
+                    wrap: false
                 }
             }
         },
         rev: {
+            zip: {
+                files: {
+                    src: [
+                        '<%= directories.dist %>/scripts/ZipLoader.js',
+                    ]
+                }
+            },
             dist: {
                 files: {
                     src: [
-                        '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                        '<%= yeoman.dist %>/styles/{,*/}*.css',
-                        '<%= yeoman.dist %>/styles/fonts/{,*/}*.*'
+                        '<%= directories.dist %>/scripts/{,*/}*.js',
+                        '!<%= directories.dist %>/scripts/*.ZipLoader.js',
+                        '<%= directories.dist %>/styles/{,*/}*.css',
+                        '<%= directories.dist %>/styles/fonts/{,*/}*.*'
                     ]
                 }
             }
         },
         preprocess: {
-          dist: {
-            options: {
-              inline: true,
-              context: {
-                DEMO: false
-              }
+            dist: {
+                options: {
+                    inline: true,
+                    context: {
+                        DEMO: false
+                    }
+                },
+                src: '<%= directories.dist %>/index.html'
             },
-            src: '<%= yeoman.dist %>/index.html'
-          },
-          demo: {
-            options: {
-              inline: true,
-              context: {
-                DEMO: true
-              }
-            },
-            src: '<%= yeoman.dist %>/index.html'
-          }
+            demo: {
+                options: {
+                    inline: true,
+                    context: {
+                        DEMO: true
+                    }
+                },
+                src: '<%= directories.dist %>/index.html'
+            }
         },
         useminPrepare: {
             options: {
-                dest: '<%= yeoman.dist %>'
+                dest: '<%= directories.dist %>'
             },
-            html: '<%= yeoman.app %>/index.html'
+            html: '<%= directories.app %>/index.html'
         },
         usemin: {
             options: {
-                dirs: ['<%= yeoman.dist %>']
+                dirs: ['<%= directories.dist %>']
             },
-            html: ['<%= yeoman.dist %>/{,*/}*.html'],
-            css: ['<%= yeoman.dist %>/styles/{,*/}*.css']
+            html: ['<%= directories.dist %>/{,*/}*.html'],
+            css: ['<%= directories.dist %>/styles/{,*/}*.css']
         },
         imagemin: {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: '<%= yeoman.app %>/images',
+                    cwd: '<%= directories.app %>/images',
                     src: '{,*/}*.{png,jpg,jpeg}',
-                    dest: '<%= yeoman.dist %>/images'
+                    dest: '<%= directories.dist %>/images'
                 }]
             }
         },
@@ -200,9 +215,9 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: '<%= yeoman.app %>',
+                    cwd: '<%= directories.app %>',
                     src: '*.html',
-                    dest: '<%= yeoman.dist %>'
+                    dest: '<%= directories.dist %>'
                 }]
             }
         },
@@ -212,8 +227,8 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= yeoman.app %>',
-                    dest: '<%= yeoman.dist %>',
+                    cwd: '<%= directories.app %>',
+                    dest: '<%= directories.dist %>',
                     src: [
                         '*.{ico,png,txt}',
                         '.htaccess',
@@ -225,18 +240,22 @@ module.exports = function (grunt) {
             styles: {
                 expand: true,
                 dot: true,
-                cwd: '<%= yeoman.app %>/styles',
+                cwd: '<%= directories.app %>/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
+            },
+            zip: {
+                src: '.tmp/requirejs/ZipLoader.js',
+                dest: '<%= directories.dist %>/scripts/ZipLoader.js'
             }
         },
         modernizr: {
-            devFile: '<%= yeoman.app %>/bower_components/modernizr/modernizr.js',
-            outputFile: '<%= yeoman.dist %>/bower_components/modernizr/modernizr.js',
+            devFile: '<%= directories.app %>/bower_components/modernizr/modernizr.js',
+            outputFile: '<%= directories.dist %>/scripts/vendor/modernizr.js',
             files: [
-                '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                '<%= yeoman.dist %>/styles/{,*/}*.css',
-                '!<%= yeoman.dist %>/scripts/vendor/*'
+                '<%= directories.app %>/scripts/{,*/}*.js',
+                '<%= directories.dist %>/styles/{,*/}*.css',
+                '!<%= directories.app %>/scripts/vendor/*'
             ],
             uglify: true
         },
@@ -255,6 +274,8 @@ module.exports = function (grunt) {
     grunt.registerTask('server', function (target) {
         if (target === 'dist') {
             return grunt.task.run(['build', 'connect:dist:keepalive']);
+        } else if (target === 'demo') {
+            return grunt.task.run(['demo', 'connect:dist:keepalive']);
         }
 
         grunt.task.run([
@@ -266,32 +287,54 @@ module.exports = function (grunt) {
         ]);
     });
 
+    grunt.registerTask('writeconfig', function () {
+        var path = grunt.file.expand({cwd: grunt.config.get('directories.dist'), filter: 'isFile'}, 'scripts/*.ZipLoader.js')[0].replace(/\.[^\.]*$/, '');
+        grunt.file.write('.tmp/require-config.js', 'require.config({paths:{\'ZipLoader\':\'' + path + '\'}});');
+    });
+
+    grunt.registerTask('writescripttag', function () {
+        var path = grunt.file.expand({cwd: grunt.config.get('directories.dist') + '/scripts', filter: 'isFile'}, '*.ht.js')[0];
+        grunt.file.write('.tmp/scripttag.html', '<script src="scripts/' + path + '"></script>');
+    });
+
     grunt.registerTask('build', [
         'clean:dist',
+        'requirejs',
+        'copy:zip',
+        'rev:zip',
+        'writeconfig',
+        'uglify:config',
+        'concat:requirejs',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',
-        'requirejs',
-        'concat',
-        'uglify',
         'modernizr',
+        'concat:style',
+        'cssmin',
         'copy:dist',
-        'rev',
+        'rev:dist',
+        'writescripttag',
         'usemin',
         'preprocess:dist'
     ]);
 
     grunt.registerTask('demo', [
         'clean:dist',
+        'requirejs',
+        'copy:zip',
+        'rev:zip',
+        'writeconfig',
+        'uglify:config',
+        'concat:requirejs',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',
-        'requirejs',
-        'concat',
-        'uglify',
         'modernizr',
+        'concat:style',
+        'cssmin',
         'copy:dist',
-        'rev',
+        'rev:dist',
+        'writescripttag',
         'usemin',
         'preprocess:demo'
     ]);
