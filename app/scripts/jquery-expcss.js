@@ -1,14 +1,10 @@
 define(['jquery'], function($) {
     'use strict';
-    function expcss() {
-        return $.extend($.apply($, arguments), {
-            expcss: function(prop, val) {
-                prop = Modernizr.prefixed(prop);
-                this.each(function(i, v) {
-                    v.style[prop] = val;
-                });
-            }
+    $.fn.expcss = function(prop, val) {
+        prop = Modernizr.prefixed(prop);
+        this.each(function(i, v) {
+            v.style[prop] = val;
         });
-    }
-    return $.extend(expcss, $);
+    };
+    return $;
 });
