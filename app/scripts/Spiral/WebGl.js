@@ -17,7 +17,7 @@ define(['jquery'], function($) {
 
         var psh = this.context.createShader(this.context.FRAGMENT_SHADER);
         var vsh = this.context.createShader(this.context.VERTEX_SHADER);
-        this.context.shaderSource(psh, 'precision highp float;uniform vec4 color;varying vec2 ptexcoord;uniform sampler2D sampler;void main(void){gl_FragColor=color*texture2D(sampler,ptexcoord);}');
+        this.context.shaderSource(psh, '#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform vec4 color;varying vec2 ptexcoord;uniform sampler2D sampler;void main(void){gl_FragColor=color*texture2D(sampler,ptexcoord);}');
         this.context.shaderSource(vsh, 'attribute vec2 pos;attribute vec2 texcoord;uniform float rot;uniform vec2 scale;uniform vec2 aspect;varying vec2 ptexcoord;void main(void){vec2 scaled=scale*pos;float crot=cos(rot);float srot=sin(rot);gl_Position=vec4(aspect*vec2(scaled.x*crot-scaled.y*srot,scaled.x*srot+scaled.y*crot),0.0,1.0);ptexcoord=texcoord;}');
         this.context.compileShader(psh);
         this.context.compileShader(vsh);
