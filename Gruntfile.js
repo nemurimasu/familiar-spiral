@@ -203,19 +203,18 @@ module.exports = function (grunt) {
         htmlmin: {
             dist: {
                 options: {
-                    /*removeCommentsFromCDATA: true,
-                    // https://github.com/yeoman/grunt-usemin/issues/44
-                    //collapseWhitespace: true,
+                    removeCommentsFromCDATA: true,
+                    collapseWhitespace: true,
                     collapseBooleanAttributes: true,
                     removeAttributeQuotes: true,
                     removeRedundantAttributes: true,
                     useShortDoctype: true,
                     removeEmptyAttributes: true,
-                    removeOptionalTags: true*/
+                    removeOptionalTags: true
                 },
                 files: [{
                     expand: true,
-                    cwd: '<%= directories.app %>',
+                    cwd: '<%= directories.dist %>',
                     src: '*.html',
                     dest: '<%= directories.dist %>'
                 }]
@@ -235,7 +234,8 @@ module.exports = function (grunt) {
                         'images/{,*/}*.{webp,gif}',
                         'styles/fonts/{,*/}*',
                         'styles/ht-glyph-ie7.css',
-                        '!styles/fonts/*.json'
+                        '!styles/fonts/*.json',
+                        '*.html'
                     ]
                 }]
             },
@@ -267,8 +267,7 @@ module.exports = function (grunt) {
             ],
             dist: [
                 'copy:styles',
-                'imagemin',
-                'htmlmin'
+                'imagemin'
             ]
         },
         cssmin: {
@@ -320,7 +319,8 @@ module.exports = function (grunt) {
         'rev:dist',
         'writescripttag',
         'usemin',
-        'preprocess:dist'
+        'preprocess:dist',
+        'htmlmin'
     ]);
 
     grunt.registerTask('demo', [
@@ -341,7 +341,8 @@ module.exports = function (grunt) {
         'rev:dist',
         'writescripttag',
         'usemin',
-        'preprocess:demo'
+        'preprocess:demo',
+        'htmlmin'
     ]);
 
     grunt.registerTask('default', [
