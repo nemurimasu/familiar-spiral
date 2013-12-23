@@ -1,28 +1,23 @@
 define(['jquery'], function($) {
     'use strict';
     function NativeAudio() {
-        this.loopTag = document.createElement('audio');
         if (!Modernizr.audio.ogg && !Modernizr.audio.mp3) {
             throw 'audio unsupported';
-        }
-        $(this.loopTag).attr({preload: true, autoplay: true, loop: true, volume: 1.0}).appendTo(document.body);
-        if (this.loopTag.loop === undefined) {
-            // thanks Firefox...
-            $(this.loopTag).bind('ended', function(event) {
-                event.target.currentTime = 0.0;
-                event.target.play();
-            });
         }
     }
     NativeAudio.prototype = {
         loopTag: null,
         tags: [],
         volume: 1.0,
+        loopVolume: 1.0,
         setVolume: function(volume) {
             this.volume = volume;
         },
         setLoopVolume: function(volume) {
-            this.loopTag.volume = volume;
+            this.loopVolume = volume;
+            if (this.loopTag) {
+                this.loopTag.volume = volume;
+            }
         },
         addSources: function(tag, src, translateUrl) {
             $(tag).empty().append($([['ogg', 'audio/ogg; codecs="vorbis"'], ['mp3', 'audio/mpeg; codecs="mp3"']]).filter(function(i, e) { return Modernizr.audio[e[0]]; }).map(function(i, e) {
@@ -30,6 +25,11 @@ define(['jquery'], function($) {
             }));
         },
         playLoop: function(src, translateUrl) {
+            if (this.loopTag) {
+                $(this.loopTag).remove();
+            }
+            this.loopTag = document.createElement('audio');
+            $(this.loopTag).attr({preload: true, autoplay: true, loop: true, volume: this.loopVolume}).appendTo(document.body);
             this.addSources(this.loopTag, src, translateUrl);
         },
         play: function(src, translateUrl) {
@@ -45,7 +45,7 @@ define(['jquery'], function($) {
             this.tags.push(tag);
         },
         stopLoop: function() {
-            $(this.loopTag).empty();
+            $(this.loopTag).remove();
         },
         stopSounds: function() {
             $(this.tags).remove();
