@@ -1,4 +1,4 @@
-define(['jquery'], function($) {
+define(['jquery', 'asset-paths'], function($, assetPaths) {
     'use strict';
     function ScriptReader(spiral, text, audio) {
         this.spiral = spiral;
@@ -84,7 +84,7 @@ define(['jquery'], function($) {
                 spiral.setSpiralAlpha(1.0);
                 spiral.setImageAlpha(1.0);
                 spiral.setRotationPeriod(10);
-                spiral.setSpiralImage('images/spiral.png');
+                spiral.setSpiralImage(assetPaths.spiral);
                 spiral.clearImage();
             }
             if (audio) {

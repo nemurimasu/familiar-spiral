@@ -6,6 +6,8 @@ module.exports = function (grunt) {
     // load all grunt tasks
     require('load-grunt-tasks')(grunt);
 
+    var path = require('path');
+
     grunt.initConfig({
         // configurable paths
         directories: {
@@ -105,9 +107,9 @@ module.exports = function (grunt) {
             }
         },
         uglify: {
-            config: {
+            bootstrap: {
                 files: {
-                    '.tmp/require.min.js': ['<%= directories.app %>/bower_components/requirejs/require.js', '.tmp/require-config.js']
+                    '.tmp/require.min.js': ['<%= directories.app %>/bower_components/requirejs/require.js', '.tmp/require-config.js', '.tmp/asset-paths.js']
                 }
             }
         },
@@ -124,7 +126,7 @@ module.exports = function (grunt) {
                         },
                         {
                             name: 'ht',
-                            exclude: ['ZipLoader'],
+                            exclude: ['ZipLoader', 'asset-paths'],
                             insertRequire: ['ht']
                         }
                     ],
@@ -146,13 +148,27 @@ module.exports = function (grunt) {
                     ]
                 }
             },
-            dist: {
+            assets: {
+                files: {
+                    src: [
+                        '<%= directories.dist %>/styles/{,*/}*.css',
+                        '<%= directories.dist %>/styles/fonts/{,*/}*',
+                        '<%= directories.dist %>/images/{,*/}*'
+                    ]
+                }
+            },
+            scripts: {
                 files: {
                     src: [
                         '<%= directories.dist %>/scripts/{,*/}*.js',
-                        '!<%= directories.dist %>/scripts/*.ZipLoader.js',
-                        '<%= directories.dist %>/styles/{,*/}*.css',
-                        '<%= directories.dist %>/styles/fonts/{,*/}*.*'
+                        '!<%= directories.dist %>/scripts/*.ZipLoader.js'
+                    ]
+                }
+            },
+            manifest: {
+                files: {
+                    src: [
+                        '<%= directories.dist %>/manifest.appcache',
                     ]
                 }
             }
@@ -172,6 +188,29 @@ module.exports = function (grunt) {
                     inline: true,
                     context: {
                         DEMO: true
+                    }
+                },
+                src: '<%= directories.dist %>/index.html'
+            }
+        },
+        'dom_munger': {
+            dist: {
+                options: {
+                    callback: function($) {
+                        var dist = grunt.config.get('directories.dist');
+                        $('html').attr('manifest', grunt.file.expand({cwd: dist, filter: 'isFile'}, '*.manifest.appcache')[0]);
+                        $('script[type="text/x-hypno"]').each(function(i, script) {
+                            $(script).html($(script).html().split('\n').map(function(l) {
+                                l = l.trim();
+                                var match;
+                                if ((match = l.match(/^(-(?:whirl)?image\s+)([^'"()]*)/)) !== null) {
+                                    if (match[2] !== 'noimage' && match[2] !== 'no image') {
+                                        return match[1] + grunt.file.expand({cwd: dist, filter: 'isFile'}, path.join(path.dirname(match[2]), '*.' + path.basename(match[2])))[0];
+                                    }
+                                }
+                                return l;
+                            }).join('\n'));
+                        });
                     }
                 },
                 src: '<%= directories.dist %>/index.html'
@@ -222,7 +261,7 @@ module.exports = function (grunt) {
         },
         // Put files not handled in other tasks here
         copy: {
-            dist: {
+            assets: {
                 files: [{
                     expand: true,
                     dot: true,
@@ -262,13 +301,36 @@ module.exports = function (grunt) {
             uglify: true
         },
         concurrent: {
+            copyassets: [
+                'copy:assets',
+                'imagemin'
+            ],
+            firstlayer: [
+                'placeassets',
+                'buildscripts',
+                'styles'
+            ],
             server: [
                 'copy:styles'
-            ],
-            dist: [
-                'copy:styles',
-                'imagemin'
             ]
+        },
+        appcache: {
+            options: {
+                basePath: '<%= directories.dist %>'
+            },
+            dist: {
+                dest: '<%= directories.dist %>/manifest.appcache',
+                cache: [
+                    '<%= directories.dist %>/**/*'
+                ]
+            },
+            demo: {
+                dest: '<%= directories.dist %>/manifest.appcache',
+                cache: [
+                    '<%= directories.dist %>/**/*',
+                    'http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png'
+                ]
+            }
         },
         cssmin: {
             '<%= directories.dist %>/styles/ht-glyph-ie7.css': '<%= directories.dist %>/styles/ht-glyph-ie7.css'
@@ -296,52 +358,74 @@ module.exports = function (grunt) {
         grunt.file.write('.tmp/require-config.js', 'require.config({paths:{\'ZipLoader\':\'' + path + '\'}});');
     });
 
+    grunt.registerTask('writeassetpaths', function () {
+        var path = grunt.file.expand({cwd: grunt.config.get('directories.dist'), filter: 'isFile'}, 'images/*.spiral.png')[0];
+        grunt.file.write('.tmp/asset-paths.js', 'define(\'asset-paths\',function(){\'use strict\';return{\'spiral\':\'' + path + '\'}});');
+    });
+
     grunt.registerTask('writescripttag', function () {
         var path = grunt.file.expand({cwd: grunt.config.get('directories.dist') + '/scripts', filter: 'isFile'}, '*.ht.js')[0];
         grunt.file.write('.tmp/scripttag.html', '<script src="scripts/' + path + '"></script>');
     });
 
-    grunt.registerTask('build', [
-        'clean:dist',
+    grunt.registerTask('styles', [
+        'copy:styles',
+        'autoprefixer',
+        'concat:style'
+    ]);
+
+    grunt.registerTask('placeassets', [
+        'concurrent:copyassets',
+        'rev:assets',
+        'writeassetpaths'
+    ]);
+
+    grunt.registerTask('buildscripts', [
         'requirejs',
         'copy:zip',
         'rev:zip',
-        'writeconfig',
-        'uglify:config',
+        'writeconfig'
+    ]);
+
+    grunt.registerTask('build', [
+        'clean:dist',
+
+        'concurrent:firstlayer',
+
+        'uglify:bootstrap',
         'concat:requirejs',
-        'useminPrepare',
-        'concurrent:dist',
-        'autoprefixer',
-        'concat:style',
         'modernizr',
-        'copy:dist',
-        'cssmin',
-        'rev:dist',
+        'rev:scripts',
         'writescripttag',
+
+        'useminPrepare',
+        'cssmin',
+        'appcache:dist',
+        'rev:manifest',
         'usemin',
         'preprocess:dist',
+        'dom_munger:dist',
         'htmlmin'
     ]);
 
     grunt.registerTask('demo', [
         'clean:dist',
-        'requirejs',
-        'copy:zip',
-        'rev:zip',
-        'writeconfig',
-        'uglify:config',
+
+        'concurrent:firstlayer',
+
+        'uglify:bootstrap',
         'concat:requirejs',
-        'useminPrepare',
-        'concurrent:dist',
-        'autoprefixer',
-        'concat:style',
         'modernizr',
-        'copy:dist',
-        'cssmin',
-        'rev:dist',
+        'rev:scripts',
         'writescripttag',
+
+        'useminPrepare',
+        'cssmin',
+        'appcache:demo',
+        'rev:manifest',
         'usemin',
         'preprocess:demo',
+        'dom_munger:dist',
         'htmlmin'
     ]);
 

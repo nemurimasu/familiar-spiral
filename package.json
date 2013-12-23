@@ -24,7 +24,9 @@
     "time-grunt": "~0.1.1",
     "grunt-preprocess": "~3.0.1",
     "grunt-bower-requirejs": "~0.8.0",
-    "grunt-contrib-requirejs": "~0.4.1"
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-appcache": "~0.1.2",
+    "grunt-dom-munger": "~3.1.0"
   },
   "engines": {
     "node": ">=0.8.0"
