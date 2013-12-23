@@ -16,6 +16,7 @@
         <script src="bower_components/modernizr/feature-detects/svg-filters.js"></script>
         <script src="bower_components/modernizr/feature-detects/blob-constructor.js"></script>
         <script src="bower_components/modernizr/feature-detects/fullscreen-api.js"></script>
+        <script src="bower_components/modernizr/feature-detects/file-api.js"></script>
         <!-- endbuild -->
     </head>
     <body>
@@ -45,10 +46,22 @@
         </a>
         <!-- @endif -->
         <div id="toolbar">
-            <!-- <a href="#open"><i class="icon-folder"><span class="label">Open</span></i></a> -->
+            <a href="#open" class="needs-fileapi"><i class="icon-folder"><span class="label">Open</span></i></a>
             <!-- <a href="#settings"><i class="icon-cog"><span class="label">Settings</span></i></a> -->
             <a href="#enter-fullscreen" class="needs-fullscreen"><i class="icon-resize-full"><span class="label">Enter Fullscreen</span></i></a>
             <a href="#exit-fullscreen" class="fullscreen-only"><i class="icon-resize-small"><span class="label">Exit Fullscreen</span></i></a>
+        </div>
+        <div id="file-dialog">
+            <p>
+                Select the script file to load. Script files can be plain text or a zip file containing a plain text script and associated images and sounds.
+            </p>
+            <p class="needs-draganddrop">
+                Tip: you can also select files by dragging them onto the spiral.
+            </p>
+            <form>
+                <input type="file" name="files" multiple /><br />
+                <button name="cancel">Cancel</button>
+            </form>
         </div>
     </body>
 </html>

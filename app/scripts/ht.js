@@ -24,24 +24,7 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
             scriptSource = new AjaxScriptSource('1.txt', reader);
         }
 
-        var body = $(document.body);
-        body.on('dragover', function(event) {
-            var dt = event.originalEvent.dataTransfer;
-            var types = dt.types;
-            for (var i = 0; i < types.length; i++) {
-                if (types[i] === 'Files') {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    dt.dropEffect = 'copy';
-                    return;
-                }
-            }
-        });
-        body.on('drop', function(event) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            var files = event.originalEvent.dataTransfer.items || event.originalEvent.dataTransfer.files;
+        function receiveFiles(files) {
             var urls = {};
             var pending = 1;
             var promise = $.Deferred();
@@ -153,6 +136,26 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
                     scriptSource = new FileScriptSource(scriptFile, reader);
                 }
             });
+        }
+
+        var body = $(document.body);
+        body.on('dragover', function(event) {
+            var dt = event.originalEvent.dataTransfer;
+            var types = dt.types;
+            for (var i = 0; i < types.length; i++) {
+                if (types[i] === 'Files') {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    dt.dropEffect = 'copy';
+                    return;
+                }
+            }
+        });
+        body.on('drop', function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            receiveFiles(event.originalEvent.dataTransfer.items || event.originalEvent.dataTransfer.files);
         });
         var requestFullscreen = Modernizr.prefixed('requestFullscreen', document.body) || Modernizr.prefixed('requestFullScreen', document.body);
         if (requestFullscreen) {
@@ -174,6 +177,25 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
                 cancelFullscreen();
             });
         }
+        $('#toolbar a[href="#open"]').click(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            $('#file-dialog').show();
+        });
+        $('#file-dialog [name="files"]').change(function(event) {
+            if (this.files.length) {
+                receiveFiles(this.files);
+                $('#file-dialog form')[0].reset();
+                $('#file-dialog').hide();
+            }
+        });
+        $('#file-dialog [name="cancel"]').click(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            $('#file-dialog').hide();
+        });
     });
     if (Modernizr.draganddrop) {
         // kick this off early so it should be ready before the user wants it

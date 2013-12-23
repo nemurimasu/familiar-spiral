@@ -98,3 +98,21 @@ body:fullscreen .needs-fullscreen {
 body:not(:fullscreen) .fullscreen-only {
   display: none;
 }
+html.no-fileapi .needs-fileapi {
+  display: none;
+}
+html.no-draganddrop .needs-draganddrop {
+  display: none;
+}
+#file-dialog {
+  position: absolute;
+  left: 25%;
+  top: 12.5%;
+  width: 50%;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1pt solid white;
+  border-radius: 4pt;
+  padding: 5pt;
+  color: white;
+  display: none;
+}
