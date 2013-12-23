@@ -2,8 +2,13 @@
 <html>
     <head>
         <meta content="width=device-width, user-scalable=no" name="viewport">
-        <link rel="stylesheet" href="styles/50c2c0b6.main.css">
-        <script src="scripts/vendor/d7c9a5da.modernizr.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="styles/0eddb2cb.main.css">
+        <!--[if IE 7]>
+        <link href="styles/ht-glyph-ie7.css" rel="stylesheet" />
+        <![endif]-->
+        <script src="scripts/vendor/dd09b7a1.modernizr.js"></script>
     </head>
     <body>
         <div id="text">
@@ -20,9 +25,27 @@
             Nyan
             -jump 5
         </script>
-        <script src="scripts/b2b6975d.ht.js"></script>
+        <script src="scripts/ece83d88.ht.js"></script>
         <a href="https://github.com/nemurimasu/familiar-spiral/">
             <img style="position: absolute; top: 0; right: 0; border: 0" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub">
         </a>
+        <div id="toolbar">
+            <a href="#open" class="needs-fileapi"><i class="icon-folder"><span class="label">Open</span></i></a>
+            <!-- <a href="#settings"><i class="icon-cog"><span class="label">Settings</span></i></a> -->
+            <a href="#enter-fullscreen" class="needs-fullscreen"><i class="icon-resize-full"><span class="label">Enter Fullscreen</span></i></a>
+            <a href="#exit-fullscreen" class="fullscreen-only"><i class="icon-resize-small"><span class="label">Exit Fullscreen</span></i></a>
+        </div>
+        <div id="file-dialog">
+            <p>
+                Select the script file to load. Script files can be plain text or a zip file containing a plain text script and associated images and sounds.
+            </p>
+            <p class="needs-draganddrop">
+                Tip: you can also select files by dragging them onto the spiral.
+            </p>
+            <form>
+                <input type="file" name="files" multiple="multiple"><br>
+                <button name="cancel">Cancel</button>
+            </form>
+        </div>
     </body>
 </html>
