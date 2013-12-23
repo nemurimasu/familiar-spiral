@@ -30,3 +30,7 @@ image noimage
 loopsound
 sound
 jump 0
+
+Icons are from Entypo and processed by Fontello.
+
+Uses JQuery, RequireJS, JSZip.
