@@ -183,7 +183,7 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
 
             $('#file-dialog').show();
         });
-        $('#file-dialog [name="files"]').change(function(event) {
+        $('#file-dialog [name="files"]').change(function() {
             if (this.files.length) {
                 receiveFiles(this.files);
                 $('#file-dialog form')[0].reset();
