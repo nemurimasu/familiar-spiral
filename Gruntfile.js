@@ -233,7 +233,9 @@ module.exports = function (grunt) {
                         '*.{ico,png,txt}',
                         '.htaccess',
                         'images/{,*/}*.{webp,gif}',
-                        'styles/fonts/{,*/}*.*',
+                        'styles/fonts/{,*/}*',
+                        'styles/ht-glyph-ie7.css',
+                        '!styles/fonts/*.json'
                     ]
                 }]
             },
@@ -269,6 +271,9 @@ module.exports = function (grunt) {
                 'htmlmin'
             ]
         },
+        cssmin: {
+            '<%= directories.dist %>/styles/ht-glyph-ie7.css': '<%= directories.dist %>/styles/ht-glyph-ie7.css'
+        }
     });
 
     grunt.registerTask('server', function (target) {
@@ -310,8 +315,8 @@ module.exports = function (grunt) {
         'autoprefixer',
         'concat:style',
         'modernizr',
-        'cssmin',
         'copy:dist',
+        'cssmin',
         'rev:dist',
         'writescripttag',
         'usemin',
@@ -331,8 +336,8 @@ module.exports = function (grunt) {
         'autoprefixer',
         'concat:style',
         'modernizr',
-        'cssmin',
         'copy:dist',
+        'cssmin',
         'rev:dist',
         'writescripttag',
         'usemin',
