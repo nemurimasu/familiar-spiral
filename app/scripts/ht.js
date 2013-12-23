@@ -154,6 +154,26 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
                 }
             });
         });
+        var requestFullscreen = Modernizr.prefixed('requestFullscreen', document.body) || Modernizr.prefixed('requestFullScreen', document.body);
+        if (requestFullscreen) {
+            requestFullscreen = requestFullscreen.bind(document.body);
+            $('#toolbar a[href="#enter-fullscreen"]').click(function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                requestFullscreen();
+            });
+        }
+        var cancelFullscreen = Modernizr.prefixed('cancelFullscreen', document) || Modernizr.prefixed('cancelFullScreen', document) || Modernizr.prefixed('exitFullscreen', document) || Modernizr.prefixed('exitFullScreen', document);
+        if (cancelFullscreen) {
+            cancelFullscreen = cancelFullscreen.bind(document);
+            $('#toolbar a[href="#exit-fullscreen"]').click(function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                cancelFullscreen();
+            });
+        }
     });
     if (Modernizr.draganddrop) {
         // kick this off early so it should be ready before the user wants it

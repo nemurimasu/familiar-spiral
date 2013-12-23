@@ -27,6 +27,7 @@
   width: 100%;
   position: absolute;
   top: 50%;
+  left: 0;
   margin-top: -11px;
   line-height: 22px;
   color: #fff;
@@ -55,4 +56,45 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+}
+#toolbar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 8pt;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 2pt;
+  padding: 3pt 4pt;
+  color: white;
+}
+#toolbar a {
+  transition: opacity 0.25s;
+  text-decoration: none;
+}
+#toolbar a,
+#toolbar a:active,
+#toolbar a:visited {
+  color: white;
+  opacity: 0.5;
+}
+#toolbar a:hover {
+  color: white;
+  opacity: 1.0;
+}
+html.fontface #toolbar .label {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+html.no-fullscreen .needs-fullscreen,
+body:fullscreen .needs-fullscreen {
+  display: none;
+}
+body:not(:fullscreen) .fullscreen-only {
+  display: none;
 }

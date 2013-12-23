@@ -2,13 +2,20 @@
 <html>
     <head>
         <meta content="width=device-width, user-scalable=no" name="viewport" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <!-- build:css(.tmp) styles/main.css -->
         <link href="styles/style.css" rel="stylesheet" />
+        <link href="styles/ht-glyph.css" rel="stylesheet" />
         <!-- endbuild -->
+        <!--[if IE 7]>
+        <link href="styles/ht-glyph-ie7.css" rel="stylesheet" />
+        <![endif]-->
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
         <script src="bower_components/modernizr/feature-detects/svg-filters.js"></script>
         <script src="bower_components/modernizr/feature-detects/blob-constructor.js"></script>
+        <script src="bower_components/modernizr/feature-detects/fullscreen-api.js"></script>
         <!-- endbuild -->
     </head>
     <body>
@@ -37,5 +44,11 @@
             <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub">
         </a>
         <!-- @endif -->
+        <div id="toolbar">
+            <!-- <a href="#open"><i class="icon-folder"><span class="label">Open</span></i></a> -->
+            <!-- <a href="#settings"><i class="icon-cog"><span class="label">Settings</span></i></a> -->
+            <a href="#enter-fullscreen" class="needs-fullscreen"><i class="icon-resize-full"><span class="label">Enter Fullscreen</span></i></a>
+            <a href="#exit-fullscreen" class="fullscreen-only"><i class="icon-resize-small"><span class="label">Exit Fullscreen</span></i></a>
+        </div>
     </body>
 </html>
