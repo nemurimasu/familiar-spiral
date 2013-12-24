@@ -1,4 +1,4 @@
-define(['jquery', 'asset-paths'], function($, assetPaths) {
+define(['jquery', 'asset-paths', 'Settings'], function($, assetPaths, settings) {
     'use strict';
     function ScriptReader(spiral, text, audio) {
         this.spiral = spiral;
@@ -20,19 +20,19 @@ define(['jquery', 'asset-paths'], function($, assetPaths) {
             return line.split(/(%\S+)/).map(function(part) {
                 if (part[0] === '%') {
                     if (part === '%name') {
-                        return '<Full Name>';
+                        return settings.fullName();
                     } else if (part === '%fn') {
-                        return '<First Name>';
+                        return settings.firstName();
                     } else if (part === '%ln') {
-                        return '<Last Name>';
+                        return settings.lastName();
                     } else if (part === '%nn') {
-                        return '<Nick Name>';
+                        return settings.nickName();
                     } else if (part === '%oname') {
-                        return '<Owner Full Name>';
+                        return settings.ownerFullName();
                     } else if (part === '%ofn') {
-                        return '<Owner First Name>';
+                        return settings.ownerFirstName();
                     } else if (part === '%oln') {
-                        return '<Owner Last Name>';
+                        return settings.ownerLastName();
                     } else {
                         console.log('Unhandled substitution: ' + part);
                     }
