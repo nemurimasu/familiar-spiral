@@ -181,7 +181,7 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
             event.stopPropagation();
             event.preventDefault();
 
-            $('#file-dialog').show();
+            $('#file-dialog').toggle();
         });
         $('#file-dialog [name="files"]').change(function() {
             if (this.files.length) {
@@ -205,7 +205,7 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
                 input.value = settings[input.name]();
             });
 
-            dialog.show();
+            dialog.toggle();
         });
         $('#settings-dialog [name="okay"]').click(function(event) {
             event.stopPropagation();
