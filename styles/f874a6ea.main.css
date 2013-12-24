@@ -204,9 +204,7 @@ body {
   text-decoration: none;
 }
 
-#toolbar a,
-#toolbar a:active,
-#toolbar a:visited {
+#toolbar a {
   color: white;
   opacity: 0.5;
 }
@@ -271,7 +269,11 @@ html.no-draganddrop .needs-draganddrop {
   display: none;
 }
 
-#file-dialog {
+html.localstorage .missing-localstorage {
+  display: none;
+}
+
+.dialog {
   position: absolute;
   left: 25%;
   top: 12.5%;
@@ -282,4 +284,10 @@ html.no-draganddrop .needs-draganddrop {
   padding: 5pt;
   color: white;
   display: none;
+  max-height: 75%;
+  overflow: auto;
+}
+
+.dialog a {
+  color: white;
 }
