@@ -119,8 +119,11 @@ define(['jquery'], function($) {
             context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
         },
         resize: function(w, h) {
-            this.canvas.width = w;
-            this.canvas.height = h;
+            var multiplier = window.devicePixelRatio || 1.0;
+            this.canvas.width = w * multiplier;
+            this.canvas.height = h * multiplier;
+            this.canvas.style.width = w + 'px';
+            this.canvas.style.height = h + 'px';
             if (w > h) {
                 this.aspectScale = [h / w, 1.0];
             } else {
