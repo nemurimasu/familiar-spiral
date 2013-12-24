@@ -1,4 +1,4 @@
-define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler', 'ScriptReader', 'ScriptSource/Tag', 'ScriptSource/Ajax', 'ScriptSource/File', 'ScriptSource/Late'], function($, NativeAudio, WebGlSpiral, NativeSpiral, TextHandler, ScriptReader, TagScriptSource, AjaxScriptSource, FileScriptSource, LateScriptSource) {
+define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler', 'ScriptReader', 'ScriptSource/Tag', 'ScriptSource/Ajax', 'ScriptSource/File', 'ScriptSource/Late', 'Settings'], function($, NativeAudio, WebGlSpiral, NativeSpiral, TextHandler, ScriptReader, TagScriptSource, AjaxScriptSource, FileScriptSource, LateScriptSource, settings) {
     'use strict';
 
     $(document).ready(function() {
@@ -195,6 +195,34 @@ define(['jquery', 'Audio/Native', 'Spiral/WebGl', 'Spiral/Native', 'TextHandler'
             event.preventDefault();
 
             $('#file-dialog').hide();
+        });
+        $('#toolbar a[href="#settings"]').click(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var dialog = $('#settings-dialog');
+            $('input', dialog).each(function(i, input) {
+                input.value = settings[input.name]();
+            });
+
+            dialog.show();
+        });
+        $('#settings-dialog [name="okay"]').click(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var dialog = $('#settings-dialog');
+            $('input', dialog).each(function(i, input) {
+                settings[input.name](input.value);
+            });
+
+            dialog.hide();
+        });
+        $('#settings-dialog [name="cancel"]').click(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            $('#settings-dialog').hide();
         });
     });
     if (Modernizr.draganddrop) {

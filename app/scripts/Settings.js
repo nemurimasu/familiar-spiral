@@ -2,11 +2,11 @@ define(function() {
     'use strict';
 
     var defaults = {
-        fullName: '<First Name> <Last Name>',
+        fullName: '<Full Name>',
         firstName: '<First Name>',
         lastName: '<Last Name>',
-        nickName: '<Nick Name>',
-        ownerFullName: '<Owner First Name> <Owner Last Name>',
+        nickName: '<Nickname>',
+        ownerFullName: '<Owner Full Name>',
         ownerFirstName: '<Owner First Name>',
         ownerLastName: '<Owner Last Name>'
     };
