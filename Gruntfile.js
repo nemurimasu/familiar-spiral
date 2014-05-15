@@ -328,7 +328,10 @@ module.exports = function (grunt) {
                 dest: '<%= directories.dist %>/manifest.appcache',
                 cache: [
                     '<%= directories.dist %>/**/*',
-                    'http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png'
+                    '//s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png'
+                ],
+                network: [
+                    'https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png'
                 ]
             }
         },
